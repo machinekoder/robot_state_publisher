@@ -115,13 +115,16 @@ void RobotStatePublisher::publishTransforms(const std::map<std::string, double>&
 }
 
 // publish fixed transforms
-void RobotStatePublisher::publishFixedTransforms(bool use_tf_static)
+void RobotStatePublisher::publishFixedTransforms(bool use_tf_static, const std::set<std::basic_string<char>> &ignored_joints)
 {
   ROS_DEBUG("Publishing transforms for fixed joints");
   std::vector<geometry_msgs::TransformStamped> tf_transforms;
 
   // loop over all fixed segments
   for (const auto & seg : segments_fixed_) {
+    if (ignored_joints.count(seg.first)) {
+      continue;
+    }
     geometry_msgs::TransformStamped tf_transform = tf2::kdlToTransform(seg.second.segment.pose(0));
     tf_transform.header.stamp = ros::Time::now();
     if (!use_tf_static) {

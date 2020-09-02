@@ -81,8 +81,8 @@ public:
    * \param joint_positions A map of joint names and joint positions.
    * \param time The time at which the joint positions were recorded
    */
-  void publishFixedTransforms(bool use_tf_static = false);
   void publishTransforms(const std::map<std::string, double>& joint_positions, const ros::Time& time);
+  void publishFixedTransforms(bool use_tf_static, const std::set<std::basic_string<char>> &ignored_joints);
 
 protected:
   void addChildren(KDL::SegmentMap::const_iterator segment);

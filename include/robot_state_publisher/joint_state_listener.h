@@ -84,6 +84,7 @@ protected:
   MimicMap mimic_;
   bool use_tf_static_{};
   bool ignore_timestamp_{};
+  std::set<std::basic_string<char>> ignored_fixed_joints_;
 
 };
 }

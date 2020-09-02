@@ -71,6 +71,12 @@ JointStateListener::JointStateListener(std::shared_ptr<RobotStatePublisher>  rsp
   n_tilde.param("use_tf_static", use_tf_static_, true);
   // ignore_timestamp_ == true, joins_states messages are accepted, no matter their timestamp
   n_tilde.param("ignore_timestamp", ignore_timestamp_, false);
+  // list of fixed joints to ignore when publishing static tfs
+  std::vector<std::string> ignored_fixed_joints;
+  n_tilde.getParam("ignored_fixed_joints", ignored_fixed_joints);
+  for (auto &name: ignored_fixed_joints) {
+    ignored_fixed_joints_.insert(name);
+  }
   // get the tf_prefix parameter from the closest namespace
   publish_interval_ = ros::Duration(1.0/std::max(publish_freq, 1.0));
 
@@ -94,7 +100,8 @@ JointStateListener::~JointStateListener() = default;
 void JointStateListener::callbackFixedJoint(const ros::TimerEvent& e)
 {
   (void)e;
-  state_publisher_->publishFixedTransforms(use_tf_static_);
+  state_publisher_->publishFixedTransforms(use_tf_static_,
+                                           ignored_fixed_joints_);
 }
 
 void JointStateListener::callbackJointState(const JointStateConstPtr& state)
